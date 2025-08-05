@@ -49,6 +49,16 @@
                                         "description": "Дистанция",
                                         "type": "string",
                                         "example": ""
+                                    },
+                                    "offset": {
+                                        "description": "Офсет",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "limit": {
+                                        "description": "Лимит",
+                                        "type": "string",
+                                        "example": ""
                                     }
                                 },
                                 "type": "object"
