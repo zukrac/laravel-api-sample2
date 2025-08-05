@@ -1,0 +1,215 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Base Backend API",
+        "description": "Документация для API теста сервера.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api/"
+        }
+    ],
+    "paths": {
+        "/search": {
+            "post": {
+                "tags": [
+                    "Search",
+                    "Company"
+                ],
+                "summary": "Поиск по компаниям",
+                "operationId": "4fdd04fcee587cc854d49941a323c2a5",
+                "requestBody": {
+                    "description": "Запрос",
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "properties": {
+                                    "token": {
+                                        "description": "Токен",
+                                        "type": "string",
+                                        "example": "hardcoded-token1"
+                                    },
+                                    "q": {
+                                        "description": "Поиск по названию",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "latitude": {
+                                        "description": "Широта",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "longitude": {
+                                        "description": "Долгота",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "distance": {
+                                        "description": "Дистанция",
+                                        "type": "string",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "companies": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CompanyResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get": {
+            "get": {
+                "tags": [
+                    "Company"
+                ],
+                "summary": "Получение профиля компании",
+                "operationId": "607cfc60381fdbd84489edd6ad3995bc",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "description": "Токен",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "hardcoded-token1"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "ID компании",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "company": {
+                                            "$ref": "#/components/schemas/CompanyResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AddressResource": {
+                "description": "Компания",
+                "properties": {
+                    "id": {
+                        "description": "ID соглашения",
+                        "type": "integer"
+                    },
+                    "status": {
+                        "description": "Статус соглашения (0 - не подписан, 1 - подписан одним, 2 - подписан всеми, 3 - прекращён)",
+                        "type": "integer"
+                    },
+                    "file_mime_type": {
+                        "description": "MIME тип документа",
+                        "type": "string"
+                    },
+                    "url": {
+                        "description": "Ссылка на документ",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Дата создания",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "description": "Дата последнего изменения",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "CompanyResource": {
+                "description": "Компания",
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Название",
+                        "type": "string"
+                    },
+                    "address": {
+                        "$ref": "#/components/schemas/PhoneResource"
+                    },
+                    "phones": {
+                        "description": "Телефоны компании",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PhoneResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "PhoneResource": {
+                "description": "Компания",
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Название",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "security": [
+        {
+            "accessToken": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Search",
+            "description": "Search"
+        },
+        {
+            "name": "Company",
+            "description": "Company"
+        }
+    ]
+}
