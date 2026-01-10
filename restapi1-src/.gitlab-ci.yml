@@ -1,0 +1,38 @@
+# Use PHP-based images instead of composer-only
+stages:
+  - test
+  - lint
+  - security
+
+variables:
+ MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}  # Reference masked variable
+  MYSQL_DATABASE: ${MYSQL_DATABASE}
+  MYSQL_USER: ${MYSQL_USER}
+  MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+.php_setup: &php_setup
+  before_script:
+    - docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
+    - composer install --prefer-dist --no-interaction --no-progress
+    - cp .env.example .env
+    - echo "DB_CONNECTION=mysql" >> .env
+    - echo "DB_HOST=mysql" >> .env
+    - php artisan key:generate
+    - php artisan migrate --force
+
+.test_template: &test_template
+  <<: *php_setup
+  services:
+    - mysql:8.0
+  script:
+    - vendor/bin/phpunit --testdox --colors=never
+
+test:php82:
+  stage: test
+  image: php:8.2-cli
+  <<: *test_template
+
+test:php83:
+  stage: test
+  image: php:8.3-cli  
+  <<: *test_template
