@@ -56,7 +56,6 @@ class ApiController extends Controller
      *     ),
      * )
      *
-     * @TODO Релизовать поиск
      */
     public function search(CompanySearchRequest $request)
     {

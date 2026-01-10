@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\TrackAnalytics;
 use App\Http\Middleware\TransformApiResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function (Application $app) {}
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->append(TrackAnalytics::class);
         $middleware->validateCsrfTokens(except: ['api/*']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
