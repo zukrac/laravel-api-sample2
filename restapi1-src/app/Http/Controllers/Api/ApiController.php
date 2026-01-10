@@ -60,7 +60,39 @@ class ApiController extends Controller
      */
     public function search(CompanySearchRequest $request)
     {
-        $companies = Company::all();
+        $query = Company::query();
+
+        if ($request->filled('q')) {
+            $query->where('name', 'like', '%' . $request->input('q') . '%');
+        }
+
+        if ($request->filled('latitude') && $request->filled('longitude') && $request->filled('distance')) {
+            $lat = $request->input('latitude');
+            $lng = $request->input('longitude');
+            $distance = $request->input('distance');
+
+            $query->whereHas('address', function ($q) use ($lat, $lng, $distance) {
+                $q->whereRaw("(
+                    6371 * acos(
+                        cos(radians(?)) *
+                        cos(radians(latitude)) *
+                        cos(radians(longitude) - radians(?)) +
+                        sin(radians(?)) *
+                        sin(radians(latitude))
+                    )
+                ) <= ?", [$lat, $lng, $lat, $distance]);
+            });
+        }
+
+        if ($request->filled('offset')) {
+            $query->offset($request->input('offset'));
+        }
+
+        if ($request->filled('limit')) {
+            $query->limit($request->input('limit'));
+        }
+
+        $companies = $query->get();
 
         return CompanyResource::collection($companies);
     }
