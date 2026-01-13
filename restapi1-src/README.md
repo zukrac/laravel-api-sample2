@@ -7,7 +7,7 @@
 - запустить докер образы \restapi1-docker\docker-compose.yml
 
 ### Развертываем проект:
-```angular2html
+```
 cd /var/www/html
 
 composer install
