@@ -8,6 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @property integer $id
+ * @property integer $user_id
+ * @property integer $parent_id
+ * @property string $content
+ * @property User $user
+ * @property Comment $parent
+ * @property array|Comment[] $replies
+ * @property mixed $commentable
+ */
 class Comment extends Model
 {
     use HasFactory;
