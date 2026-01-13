@@ -18,7 +18,7 @@
                     "Company"
                 ],
                 "summary": "Поиск по компаниям",
-                "operationId": "4fdd04fcee587cc854d49941a323c2a5",
+                "operationId": "a426a7ec748d6426b8bc6555e915b5ef",
                 "requestBody": {
                     "description": "Запрос",
                     "content": {
@@ -94,7 +94,7 @@
                     "Company"
                 ],
                 "summary": "Получение профиля компании",
-                "operationId": "607cfc60381fdbd84489edd6ad3995bc",
+                "operationId": "d8f85921e5a9eacab57994e70d5e0a84",
                 "parameters": [
                     {
                         "name": "token",
@@ -133,6 +133,340 @@
                     }
                 }
             }
+        },
+        "/comments": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Получить список комментариев",
+                "operationId": "e21e2ae66afe62e7d8d0b023798c70af",
+                "parameters": [
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "Курсор для пагинации",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Количество элементов на странице (по умолчанию 15, максимум 100)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "commentable_type",
+                        "in": "query",
+                        "description": "Тип комментируемого объекта для фильтрации",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "App\\\\Models\\\\Product"
+                        }
+                    },
+                    {
+                        "name": "commentable_id",
+                        "in": "query",
+                        "description": "ID комментируемого объекта для фильтрации",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "parent_id",
+                        "in": "query",
+                        "description": "ID родительского комментария для получения ответов",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": null
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CommentResource"
+                                            }
+                                        },
+                                        "next_cursor": {
+                                            "description": "Курсор для следующей страницы",
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "prev_cursor": {
+                                            "description": "Курсор для предыдущей страницы",
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "per_page": {
+                                            "description": "Количество элементов на странице",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Создать комментарий",
+                "operationId": "478e0f4964ebbe8d3a22df34f4fcddab",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "content": {
+                                        "description": "Содержание комментария",
+                                        "type": "string",
+                                        "example": "Отличный продукт!"
+                                    },
+                                    "commentable_type": {
+                                        "description": "Тип комментируемого объекта",
+                                        "type": "string",
+                                        "example": "App\\\\Models\\\\Product"
+                                    },
+                                    "commentable_id": {
+                                        "description": "ID комментируемого объекта",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "parent_id": {
+                                        "description": "ID родительского комментария (для ответов)",
+                                        "type": "integer",
+                                        "example": null
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Успешно создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "comment": {
+                                            "$ref": "#/components/schemas/CommentResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            }
+        },
+        "/comments/{id}": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Получить комментарий по ID",
+                "operationId": "c2aac1315d33473f4b25ddf45941b871",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID комментария",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "comment": {
+                                            "$ref": "#/components/schemas/CommentResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Комментарий не найден"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Обновить комментарий",
+                "operationId": "0904942451844b2582af15f7c38988b4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID комментария",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "content": {
+                                        "description": "Содержание комментария",
+                                        "type": "string",
+                                        "example": "Обновленный текст комментария"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешно обновлен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "comment": {
+                                            "$ref": "#/components/schemas/CommentResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Комментарий не найден"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Удалить комментарий",
+                "operationId": "dc71fcedd4e6d8fe9a74a965257cc90b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID комментария",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешно удален",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Comment deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Комментарий не найден"
+                    }
+                }
+            }
+        },
+        "/comments/{id}/replies": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Получить ответы на комментарий",
+                "operationId": "46abbc022b3a64df3110d0bdfbee71c3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID родительского комментария",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "replies": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CommentResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Комментарий не найден"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -163,6 +497,81 @@
                     "updated_at": {
                         "description": "Дата последнего изменения",
                         "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryResource": {
+                "description": "Категория",
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Название",
+                        "type": "string"
+                    },
+                    "parent_id": {
+                        "description": "ID родительской категории",
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "level": {
+                        "description": "Уровень",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "CommentResource": {
+                "description": "Комментарий",
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "content": {
+                        "description": "Содержание комментария",
+                        "type": "string"
+                    },
+                    "user": {
+                        "description": "Автор комментария",
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "email": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "commentable_id": {
+                        "description": "ID комментируемого объекта",
+                        "type": "integer"
+                    },
+                    "commentable_type": {
+                        "description": "Тип комментируемого объекта",
+                        "type": "string"
+                    },
+                    "parent_id": {
+                        "description": "ID родительского комментария",
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Дата создания",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Дата обновления",
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
@@ -204,6 +613,104 @@
                     }
                 },
                 "type": "object"
+            },
+            "ProductResource": {
+                "description": "Продукт",
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Название",
+                        "type": "string"
+                    },
+                    "sku": {
+                        "description": "SKU",
+                        "type": "string"
+                    },
+                    "price": {
+                        "description": "Цена",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "type": {
+                        "description": "Тип продукта",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Описание",
+                        "type": "string"
+                    },
+                    "quantity": {
+                        "description": "Количество",
+                        "type": "integer"
+                    },
+                    "weight": {
+                        "description": "Вес",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "length": {
+                        "description": "Длина",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "width": {
+                        "description": "Ширина",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "height": {
+                        "description": "Высота",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "is_active": {
+                        "description": "Активен",
+                        "type": "boolean"
+                    },
+                    "is_featured": {
+                        "description": "Рекомендуемый",
+                        "type": "boolean"
+                    },
+                    "meta_title": {
+                        "description": "Мета заголовок",
+                        "type": "string"
+                    },
+                    "meta_description": {
+                        "description": "Мета описание",
+                        "type": "string"
+                    },
+                    "meta_keywords": {
+                        "description": "Мета ключевые слова",
+                        "type": "string"
+                    },
+                    "company_id": {
+                        "description": "ID компании",
+                        "type": "integer",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "description": "Пользователь",
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Имя",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Email",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
             }
         }
     },
@@ -220,6 +727,10 @@
         {
             "name": "Company",
             "description": "Company"
+        },
+        {
+            "name": "Comments",
+            "description": "Comments"
         }
     ]
 }
