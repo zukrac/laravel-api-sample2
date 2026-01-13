@@ -199,29 +199,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/CommentResource"
-                                            }
-                                        },
-                                        "next_cursor": {
-                                            "description": "Курсор для следующей страницы",
-                                            "type": "string",
-                                            "nullable": true
-                                        },
-                                        "prev_cursor": {
-                                            "description": "Курсор для предыдущей страницы",
-                                            "type": "string",
-                                            "nullable": true
-                                        },
-                                        "per_page": {
-                                            "description": "Количество элементов на странице",
-                                            "type": "integer"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/CommentSectionResource"
                                 }
                             }
                         }
@@ -576,6 +554,33 @@
                 },
                 "type": "object"
             },
+            "CommentSectionResource": {
+                "description": "Секция комментариев с пагинацией",
+                "properties": {
+                    "data": {
+                        "description": "Список комментариев",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CommentResource"
+                        }
+                    },
+                    "next_cursor": {
+                        "description": "Курсор для следующей страницы",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "prev_cursor": {
+                        "description": "Курсор для предыдущей страницы",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "per_page": {
+                        "description": "Количество элементов на странице",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
             "CompanyResource": {
                 "description": "Компания",
                 "properties": {
@@ -596,6 +601,9 @@
                         "items": {
                             "$ref": "#/components/schemas/PhoneResource"
                         }
+                    },
+                    "comments_section": {
+                        "$ref": "#/components/schemas/CommentSectionResource"
                     }
                 },
                 "type": "object"

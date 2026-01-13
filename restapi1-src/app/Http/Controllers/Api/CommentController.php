@@ -7,6 +7,7 @@ use App\Http\Requests\IndexCommentsRequest;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Http\Resources\CommentResource;
+use App\Http\Resources\CommentSectionResource;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -110,12 +111,7 @@ class CommentController extends Controller
      *     @OA\Response(
      *          response=200,
      *          description="Успешный ответ",
-     *          @OA\JsonContent(
-     *              @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/CommentResource")),
-     *              @OA\Property(property="next_cursor", type="string", description="Курсор для следующей страницы", nullable=true),
-     *              @OA\Property(property="prev_cursor", type="string", description="Курсор для предыдущей страницы", nullable=true),
-     *              @OA\Property(property="per_page", type="integer", description="Количество элементов на странице"),
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/CommentSectionResource")
      *      ),
      * )
      */
@@ -136,12 +132,7 @@ class CommentController extends Controller
 
         $paginator = $query->orderBy('created_at', 'desc')->cursorPaginate($perPage);
 
-        return response()->json([
-            'data' => CommentResource::collection($paginator->items()),
-            'next_cursor' => $paginator->nextCursor()?->encode(),
-            'prev_cursor' => $paginator->previousCursor()?->encode(),
-            'per_page' => $paginator->perPage(),
-        ]);
+        return response()->json(CommentSectionResource::make($paginator));
     }
 
     /**
