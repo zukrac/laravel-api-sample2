@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\IndexCommentsRequest;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Http\Resources\CommentResource;
@@ -71,6 +72,20 @@ class CommentController extends Controller
      *     summary="Получить список комментариев",
      *
      *     @OA\Parameter(
+     *         name="cursor",
+     *         in="query",
+     *         description="Курсор для пагинации",
+     *         required=false,
+     *         @OA\Schema(type="string", example="")
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Количество элементов на странице (по умолчанию 15, максимум 100)",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=15)
+     *     ),
+     *     @OA\Parameter(
      *         name="commentable_type",
      *         in="query",
      *         description="Тип комментируемого объекта для фильтрации",
@@ -96,12 +111,15 @@ class CommentController extends Controller
      *          response=200,
      *          description="Успешный ответ",
      *          @OA\JsonContent(
-     *              @OA\Property(property="comments", type="array", @OA\Items(ref="#/components/schemas/CommentResource"))
+     *              @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/CommentResource")),
+     *              @OA\Property(property="next_cursor", type="string", description="Курсор для следующей страницы", nullable=true),
+     *              @OA\Property(property="prev_cursor", type="string", description="Курсор для предыдущей страницы", nullable=true),
+     *              @OA\Property(property="per_page", type="integer", description="Количество элементов на странице"),
      *          )
      *      ),
      * )
      */
-    public function index(Request $request): JsonResponse
+    public function index(IndexCommentsRequest $request): JsonResponse
     {
         $query = Comment::with(['user', 'parent']);
 
@@ -114,10 +132,15 @@ class CommentController extends Controller
             $query->where('parent_id', $request->input('parent_id'));
         }
 
-        $comments = $query->orderBy('created_at', 'desc')->get();
+        $perPage = $request->input('per_page', 15);
+
+        $paginator = $query->orderBy('created_at', 'desc')->cursorPaginate($perPage);
 
         return response()->json([
-            'comments' => CommentResource::collection($comments),
+            'data' => CommentResource::collection($paginator->items()),
+            'next_cursor' => $paginator->nextCursor()?->encode(),
+            'prev_cursor' => $paginator->previousCursor()?->encode(),
+            'per_page' => $paginator->perPage(),
         ]);
     }
 
